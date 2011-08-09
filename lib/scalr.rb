@@ -20,6 +20,9 @@ module Scalr
   mattr_accessor :version
   @@version = "2.0.0"
   
+  mattr_accessor :debug
+  @@debug = false
+  
   class << self
     
     def method_missing(method_id, *arguments)

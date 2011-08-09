@@ -77,7 +77,7 @@ module Scalr
     
     def initialize(action, endpoint, key_id, access_key, version, *arguments)
       set_inputs(action, arguments.flatten.first)
-      @inputs.merge!('Action' => ACTIONS[action.to_sym][:name], 'KeyID' => key_id, 'Version' => version, 'Timestamp' => Time.now.utc.iso8601)
+      @inputs.merge!('Action' => ACTIONS[action.to_sym][:name], 'KeyID' => key_id, 'Version' => version, 'Timestamp' => Time.now.utc.iso8601,'debug'=> Scalr.debug ? 1 : 0 )
       @endpoint = endpoint
       @access_key = access_key
     end
@@ -101,7 +101,13 @@ module Scalr
         @inputs = {}
         input_hash.each do |key, value|
           raise InvalidInputError.new("Unknown input: #{key.to_s}") if ACTIONS[action][:inputs][key].nil?
-          @inputs[INPUTS[key]] = value.to_s
+	  if value.is_a? Hash
+	    value.each_pair do |k,v|
+		@inputs[INPUTS[key] + "[#{k}]"] = v.to_s
+	    end
+	  else
+	    @inputs[INPUTS[key]] = value.to_s
+          end
         end
       end
       
