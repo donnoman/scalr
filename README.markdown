@@ -19,6 +19,26 @@ Now, just initialize scalr with your api values (can be found in your system set
 
     Scalr.key_id = "your_key_id"
     Scalr.access_key = "your_access_key"
+    
+The mechanized api is used to help augment the published REST api and uses web requests to the scalr web service as opposed to the REST api endpoint.
+    
+To use the mechanized api calls you must also set:
+
+    Scalr::Mechanize.user = "your username"
+    Scalr::Mechanize.password = "your password"
+    
+    Optional (default is shown):
+    
+    Scalr::Mechanize.endpoint = "my.scalr.net"
+    
+Mechanized api calls:
+
+   Scalr::Mechanize.server_snapshot(:server_id => "value", :role_name => "value", :replacement_policy => :replace_all)
+   
+   TODO:
+   
+   Scalr::Mechanize.farm_clone(:farm_id => "value", :new_farm_name => "value")
+   
 
 Like most rubyists, I can't stand camel case, so you make calls to the Scalr API with their underscore equivalent names and parameters:
 

@@ -70,7 +70,7 @@ module Scalr
       :value => 'Value',
       :watcher_name => 'WatcherName',
       :weight => 'Weight',
-      :zone_name => 'ZoneName'      
+      :zone_name => 'ZoneName'
     }
     
     attr_accessor :inputs, :endpoint, :access_key, :signature

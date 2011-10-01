@@ -3,6 +3,7 @@ require 'active_support/core_ext'
 
 require File.dirname(__FILE__) + '/scalr/response'
 require File.dirname(__FILE__) + '/scalr/request'
+require File.dirname(__FILE__) + '/scalr/mechanize'
 require File.dirname(__FILE__) + '/scalr/core_extensions/hash'
 require File.dirname(__FILE__) + '/scalr/core_extensions/http'
 
