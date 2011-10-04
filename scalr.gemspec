@@ -22,6 +22,8 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = ">= 1.3.7"
 
   s.add_dependency("activesupport", [">= 0"])
+  s.add_dependency("i18n", ">= 0.5.0")
+  s.add_dependency("ruby-hmac",">=0.4.0")
 
   s.files        = Dir.glob("lib/**/*") + %w(README.markdown)
   s.require_path = 'lib'
