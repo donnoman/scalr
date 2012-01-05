@@ -26,7 +26,8 @@ module Scalr
         raise InvalidInputError, "server_id missing" unless options[:server_id]
         raise InvalidInputError, "role_name missing" unless options[:role_name]
         raise InvalidInputError, "replacment_policy missing" unless options[:replacement_policy]
-        page = agent.post("https://#{endpoint}/servers/xServerCreateSnapshot", "serverId" => options[:server_id], "roleName" => options[:role_name], "replaceType" => options[:replacement_policy])
+        options[:no_servers_replace] ||= true
+        page = agent.post("https://#{endpoint}/servers/xServerCreateSnapshot", "serverId" => options[:server_id], "roleName" => options[:role_name], "replaceType" => options[:replacement_policy], "noServersReplace" => options[:no_servers_replace] ? 'on' : 'off')
         raise ScalrError, "server_snapshot unsuccessful #{page.body}" unless JSON.parse(page.body)['success']
         page
       end
