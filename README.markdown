@@ -42,7 +42,7 @@ Mechanized api calls:
 
 Like most rubyists, I can't stand camel case, so you make calls to the Scalr API with their underscore equivalent names and parameters:
 
-    response = Scalr.list_dns_zone_records(:domain_name => 'domain.com')
+    response = Scalr.dns_zone_records_list(:zone_name => 'domain.com')
 
 All API calls return a Scalr::Response instance with the following attributes:
 
@@ -67,6 +67,7 @@ I recommend opening up an irb session and making test calls to figure out the re
 
 * [threetee](https://github.com/threetee)
 * [jagthedrummer](https://github.com/jagthedrummer)
+* [donnoman](https://github.com/donnoman)
 
 ## Copyright
 
