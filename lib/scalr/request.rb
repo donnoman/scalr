@@ -1,15 +1,14 @@
 require 'uri'
-require 'hmac'
-require 'hmac-sha2'
+require 'openssl'
 require 'base64'
-require 'net/https' 
+require 'net/https'
 require 'net/http'
 
 module Scalr
   class Request
     class ScalrError < RuntimeError; end
     class InvalidInputError < ScalrError; end
-    
+
     ACTIONS = {
       :bundle_task_get_status => {:name => 'BundleTaskGetStatus', :inputs => {:bundle_task_id => true}},
       :dns_zone_create => {:name => 'DNSZoneCreate', :inputs => {:domain_name => true, :farm_id => false, :farm_role_id => false}},
@@ -70,28 +69,27 @@ module Scalr
       :value => 'Value',
       :watcher_name => 'WatcherName',
       :weight => 'Weight',
-      :zone_name => 'ZoneName'      
+      :zone_name => 'ZoneName'
     }
-    
+
     attr_accessor :inputs, :endpoint, :access_key, :signature
-    
+
     def initialize(action, endpoint, key_id, access_key, version, *arguments)
       set_inputs(action, arguments.flatten.first)
       @inputs.merge!('Action' => ACTIONS[action.to_sym][:name], 'KeyID' => key_id, 'Version' => version, 'Timestamp' => Time.now.utc.iso8601)
       @endpoint = endpoint
       @access_key = access_key
     end
-    
+
     def process!
-      set_signature!
       http = Net::HTTP.new(@endpoint, 443)
       http.use_ssl = true
-      response, data = http.get("/?" + query_string + "&Signature=#{@signature}", {})
+      response, data = http.get("/?" + query_string + "&Signature=#{signature}&AuthVersion=3", {})
       return Scalr::Response.new(response, data)
     end
-    
+
     private
-    
+
       def set_inputs(action, input_hash)
         input_hash ||= {}
         raise InvalidInputError.new unless input_hash.is_a? Hash
@@ -104,17 +102,28 @@ module Scalr
           @inputs[INPUTS[key]] = value.to_s
         end
       end
-      
+
       def query_string
         @inputs.sort.collect { |key, value| [URI.escape(key.to_s), URI.escape(value.to_s)].join('=') }.join('&')
       end
-      
-      def set_signature!
-        string_to_sign = query_string.gsub('=','').gsub('&','')
-        hmac = HMAC::SHA256.new(@access_key)
-        hmac.update(string_to_sign)
-        @signature = URI.escape(Base64.encode64(hmac.digest).chomp, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+
+      # VERSION 3 Signature
+      # %Action%:%KeyID%:%TimeStamp%
+      # For example: LaunchFarm:YOURKEYID:2009-06-19T05:13:00.000Z
+      # To use new signature you also need to add the following data to your query:
+      # AuthVersion = 3
+
+      def raw_signature
+        "#{@inputs['Action']}:#{@inputs['KeyID']}:#{@inputs['Timestamp']}"
       end
-      
+
+      def digest
+        OpenSSL::HMAC.digest 'sha256', @access_key, raw_signature
+      end
+
+      def signature
+        URI.escape(Base64.encode64(digest).chomp, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+      end
+
   end
 end
