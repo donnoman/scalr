@@ -82,10 +82,9 @@ module Scalr
     end
 
     def process!
-      set_signature!
       http = Net::HTTP.new(@endpoint, 443)
       http.use_ssl = true
-      response, data = http.get("/?" + query_string + "&Signature=#{@signature}", {})
+      response, data = http.get("/?" + query_string + "&Signature=#{signature}&AuthVersion=3", {})
       return Scalr::Response.new(response, data)
     end
 
@@ -108,12 +107,22 @@ module Scalr
         @inputs.sort.collect { |key, value| [URI.escape(key.to_s), URI.escape(value.to_s)].join('=') }.join('&')
       end
 
-      def digest
-        OpenSSL::HMAC.hexdigest 'sha256', @access_key, query_string.gsub('=','').gsub('&','')
+      # VERSION 3 Signature
+      # %Action%:%KeyID%:%TimeStamp%
+      # For example: LaunchFarm:YOURKEYID:2009-06-19T05:13:00.000Z
+      # To use new signature you also need to add the following data to your query:
+      # AuthVersion = 3
+
+      def raw_signature
+        "#{@inputs['Action']}:#{@inputs['KeyID']}:#{@inputs['Timestamp']}"
       end
 
-      def set_signature!
-        @signature = URI.escape(Base64.encode64(digest).chomp, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+      def digest
+        OpenSSL::HMAC.digest 'sha256', @access_key, raw_signature
+      end
+
+      def signature
+        URI.escape(Base64.encode64(digest).chomp, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
       end
 
   end
