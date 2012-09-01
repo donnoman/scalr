@@ -18,7 +18,7 @@ module Scalr
   @@access_key = nil
 
   mattr_accessor :version
-  @@version = "2.3.1"
+  @@version = "2.0.0"
 
   mattr_accessor :debug
   @@debug = false
