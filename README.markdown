@@ -22,7 +22,7 @@ Now, just initialize scalr with your api values (can be found in your system set
 
 Like most rubyists, I can't stand camel case, so you make calls to the Scalr API with their underscore equivalent names and parameters:
 
-    response = Scalr.list_dns_zone_records(:domain_name => 'domain.com')
+    response = Scalr.dns_zone_records_list(:zone_name => 'domain.com')
 
 All API calls return a Scalr::Response instance with the following attributes:
 
@@ -31,12 +31,12 @@ All API calls return a Scalr::Response instance with the following attributes:
     response.value # the value returned from the API as a hash
     response.error # if the requests returns an API error it is stored here for easy access
 
-Just like the actions and inputs, all returned values are put in the response.value hash as underscored symbols (converted from the camel case returned by the gateway). 
+Just like the actions and inputs, all returned values are put in the response.value hash as underscored symbols (converted from the camel case returned by the gateway).
 
 I recommend opening up an irb session and making test calls to figure out the response structures.
 
 ## Note on Patches/Pull Requests
- 
+
 * Fork the project.
 * Make your feature addition or bug fix.
 * Commit, do not mess with rakefile, version, or history.
@@ -47,6 +47,7 @@ I recommend opening up an irb session and making test calls to figure out the re
 
 * [threetee](https://github.com/threetee)
 * [jagthedrummer](https://github.com/jagthedrummer)
+* [donnoman](https://github.com/donnoman)
 
 ## Copyright
 
