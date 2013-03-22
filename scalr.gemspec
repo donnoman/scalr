@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("activesupport", ">= 2")
   s.add_dependency("i18n", ">= 0.5.0")
-  s.add_dependency("mechanize", "~> 2.0")
+  s.add_dependency("mechanize", "~> 2.5.0")
 
   s.files        = Dir.glob("lib/**/*") + %w(README.markdown)
   s.require_path = 'lib'
